@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load user_tags %}
+  {% block content %} {% block styles %} 
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/listas/listas.css' %}">
+  <link rel="stylesheet" href="{% static 'css/reset/reset.css' %}">
+  <link rel="stylesheet" href="{% static 'css/base/base.css' %}">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  {% endblock %}
+  {% if user.is_authenticated %}
+  <div class="col">
+    <div class="table-wrapper" id="round">
+      <div class="table-title" id="round-top">
+          <div class="row">
+            <div class="col-sm-7">
+                <h2>Pedido: # {{ pedido.empresa }}</h2>
+            </div>
+         </div>
+        </div> 
+        <table class="table table-striped table-hover table-responsive-sm text-justify">
+        <thead>
+          <tr>
+            <th class="text-center">Codigo</th>
+            <th class="text-center">Descrição</th>
+            <th class="text-center">Quantidade</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for item in itens %}
+                  {% if item.quantidade > 0 %}
+                    <tr>
+                      <td class="text-left">{{  item.item.codigo }}</th>
+                      <td class="text-center">{{ item.item.descricao }}</th>
+                      <td class="text-right"> {{ item.quantidade }}</th>
+                    </tr>
+                  {% endif %}
+        {% endfor %}
+        </tbody>
+      </table>
+    </div> 
+</div>  
+{% endif %}
+{% endblock %}

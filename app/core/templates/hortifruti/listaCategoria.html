@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load user_tags %}
+{% load static %}
+  {% block content %} {% block styles %} 
+  <link rel="stylesheet" href="{% static 'css/listas/listas.css' %}">
+  <link rel="stylesheet" href="{% static 'css/reset/reset.css' %}">
+  <link rel="stylesheet" href="{% static 'css/base/base.css' %}">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  {% endblock %}
+  {% if user.is_authenticated %} 
+  {% if user|has_group:"hortifruti" %}
+  <div class="col">
+    <div class="table-wrapper" id="round">
+      <div class="table-title" id="round-top">
+          <div class="row spacing mt-3">
+            <div class="col-sm-7">
+                <h2>Categorias</h2>
+                <br>
+              <form action="" method="get">
+                <div class="search col">
+                  <input value="{{ request.GET.search }}" name="search" type="text" class="search form-control" placeholder="Search...">
+                  <button type="submit" id="find">
+                    <i class="fas fa-search"></i>
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <div class="btn-principal">
+                <div class="col-sm-5">
+                    <a href="{% url 'CategoriaHortifrutiCadastro' %}" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Adicionar Categoria</span></a>
+                </div>
+            </div>
+          </div>
+      </div>
+      <table class="table table-striped table-hover table-responsive-sm text-justify">
+        <thead>
+            <tr>
+              <th class="text-center">Descrição</th>
+              <th class="text-center">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for categoria in categoriaHortifruti_list %}
+            <tr>
+              <td class="text-center">{{ categoria.descricao }}</td>
+              <td class="text-center icons-td">
+                <a href="{% url 'CategoriaHortifrutiEditar' categoria.pk %}" class="edit">
+                  <i class="material-icons" data-toggle="tooltip" title="Editar">&#xE254;</i>
+                </a>
+                <a href="{% url 'CategoriaHortifrutiExcluir' categoria.pk %}" class="delete">
+                  <i class="material-icons" data-toggle="tooltip" title="Excluir">&#xE872;</i>
+                </a>             
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    </div>
+  </div>  
+  {% endif %}
+  {% endif %}
+{% endblock %}

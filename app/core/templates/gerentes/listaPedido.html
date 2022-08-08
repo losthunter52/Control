@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load user_tags %}
+{% load static %}
+  {% block content %} {% block styles %} 
+  <link rel="stylesheet" href="{% static 'css/listas/listas.css' %}">
+  <link rel="stylesheet" href="{% static 'css/reset/reset.css' %}">
+  <link rel="stylesheet" href="{% static 'css/base/base.css' %}">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  {% endblock %}
+  {% if user.is_authenticated %}
+  <div class="col">
+    <div class="table-wrapper" id="round">
+      <div class="table-title" id="round-top">
+          <div class="row spacing mt-3">
+            <div class="col-sm-7">
+                <h2>Pedidos</h2>
+            </div>
+          </div>
+      </div>
+      <table class="table table-striped table-hover table-responsive-sm text-justify">
+        <thead>
+            <tr>
+              <th class="text-center">Tipo</th>
+              <th class="text-center">Empresa</th>
+              <th class="text-center">Descrição</th>
+              <th class="text-center">Data Final</th>
+              <th class="text-center">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for pedido in pedidoAbastecimento_list %}
+            <tr>
+              <td class="text-center">{{ pedido.master.tipo }}</td>
+              <td class="text-center">{{ pedido.empresa }}</td>
+              <td class="text-center">{{ pedido.master.descricao }}</td>
+              <td class="text-center">{{ pedido.master.data_final }}</td>
+              <td class="text-center icons-td">
+                <a href="{% url 'PedidoAbastecimentoDetalhes' pedido.pk %}" class="details">
+                  <span class="material-icons">
+                    visibility
+                  </span>
+                </a>
+                {% if pedido.aberto %}
+                <a href="{% url 'PedidoAbastecimentoEditar' pedido.pk %}" class="edit">
+                  <i class="material-icons" data-toggle="tooltip" title="Editar">&#xE254;</i>
+                </a>
+                {% endif %}
+                {% if user|has_group:"abastecimento" %} 
+                <a href="{% url 'PedidoAbastecimentoExcluir' pedido.pk %}" class="delete">
+                  <i class="material-icons" data-toggle="tooltip" title="Excluir">&#xE872;</i>
+                </a>  
+                {% endif %}           
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    </div>
+  </div>  
+  {% endif %}
+{% endblock %}

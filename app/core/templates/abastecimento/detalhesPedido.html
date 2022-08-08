@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load user_tags %}
+  {% block content %} {% block styles %} 
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/listas/listas.css' %}">
+  <link rel="stylesheet" href="{% static 'css/reset/reset.css' %}">
+  <link rel="stylesheet" href="{% static 'css/base/base.css' %}">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <style type="text/css">
+    #botao-flutuante {
+        position: fixed;
+        bottom: 2%;
+        right: 2%;
+        z-index: 1000; /* Faz com que fique sobre todos os elementos da página */
+    }
+  </style>
+  {% endblock %}
+  {% if user.is_authenticated %}
+  <div class="col">
+    <div class="table-wrapper" id="round">
+      <div class="table-title" id="round-top">
+          <div class="row">
+            <div class="col-auto mr-auto">
+                <h2>Pedido: # {{ pedido.empresa }}</h2>
+            </div>
+            <div class="col-auto">  
+              <button class="btn btn-success" onclick="PrintElem('print')">Imprimir  <i class="fa fa-print"></i></button>
+            </div>
+         </div>
+        </div> 
+        <table class="table table-striped table-hover table-responsive-sm text-justify">
+        <thead>
+          <tr>
+            <th class="text-center">Codigo</th>
+            <th class="text-center">Descrição</th>
+            <th class="text-center">Açougue</th>
+            <th class="text-center">Loja</th>
+            <th class="text-center">Padaria</th>
+            <th class="text-center">Verdura</th>
+            <th class="text-center">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for item in itens %}
+                  {% if item.quantidadeRequisitada > 0 %}
+                    <tr>
+                      <td class="text-left">{{  item.item.codigo }}</th>
+                      <td class="text-center">{{ item.item.descricao }}</th>
+                      <td class="text-center"> {{ item.quantidadeAcougue }}</th>
+                      <td class="text-center"> {{ item.quantidadeLoja }}</th>
+                      <td class="text-center"> {{ item.quantidadePadaria }}</th>
+                      <td class="text-center"> {{ item.quantidadeVerdura }}</th>
+                      <td class="text-center"> {{ item.quantidadeRequisitada }}</th>
+                    </tr>
+                  {% endif %}
+        {% endfor %}
+        </tbody>
+      </table>
+    </div> 
+</div>  
+<div id="print" hidden>
+  <table class="table-sm table-striped table-bordered w-100 d-block d-md-table">
+    <thead>
+      <tr>
+        <th class="text-center">Codigo</th>
+        <th class="text-center">Descrição</th>
+        <th class="text-center">Açougue</th>
+        <th class="text-center">Loja</th>
+        <th class="text-center">Padaria</th>
+        <th class="text-center">Verdura</th>
+        <th class="text-center">Total</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for item in itens %}
+              {% if item.quantidadeRequisitada > 0 %}
+                <tr>
+                  <td class="text-right">{{  item.item.codigo }}</th>
+                  <td class="text-left">{{ item.item.descricao }}</th>
+                  <td class="text-center"> {{ item.quantidadeAcougue }}</th>
+                  <td class="text-center"> {{ item.quantidadeLoja }}</th>
+                  <td class="text-center"> {{ item.quantidadePadaria }}</th>
+                  <td class="text-center"> {{ item.quantidadeVerdura }}</th>
+                  <td class="text-center"> {{ item.quantidadeRequisitada }}</th>
+                </tr>
+              {% endif %}
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+{% block script %}
+<script>
+var idEmpresa = "{{ pedido.empresa }}";
+var idPedido = "{{ pedido.master.pk }}";
+var css1 = "{% static 'css/bootstrap.css' %}";
+var css2 = "{% static 'css/bootstrap.min.css' %}";
+var css3 = "{% static 'css/bootstrap-grid.css' %}";
+function PrintElem(print)
+{
+    var mywindow = window.open('', 'PRINT', 'height=400,width=600');
+
+    mywindow.document.write('<html><head><title>' + 'Pedido' + idEmpresa + '[' + idPedido + '] ' + '</title>');
+    mywindow.document.write('<link rel="stylesheet" href='+ css1 +' type="text/css" media="all"/>');
+    mywindow.document.write('<link rel="stylesheet" href='+ css2 +' type="text/css" media="all"/>');
+    mywindow.document.write('<link rel="stylesheet" href='+ css3 +' type="text/css" media="all" />');
+    mywindow.document.write('</head><body >');
+    mywindow.document.write('<p class="text-center">' + 'Relatorio de Pedido #' + idPedido + '   Empresa:   ' + idEmpresa + '</p>');
+    mywindow.document.write(document.getElementById(print).innerHTML);
+    mywindow.document.write('</body></html>');
+    mywindow.focus(); 
+    setTimeout(function(){mywindow.print()}, 500);
+
+    return true;
+}
+</script>
+{% endblock %}
+{% endblock %}

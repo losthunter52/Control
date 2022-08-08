@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% block content %} {% load widget_tweaks %} {% block styles %}
+{% load user_tags %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/listas/listas.css' %}">
+<link rel="stylesheet" href="{% static 'css/reset/reset.css' %}">
+<link rel="stylesheet" href="{% static 'css/base/base.css' %}">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<style type="text/css">
+  #botao-flutuante {
+      position: fixed;
+      bottom: 2%;
+      right: 2%;
+      z-index: 1000; /* Faz com que fique sobre todos os elementos da página */
+  }
+</style>
+{% endblock %}
+{% if user.is_authenticated %}
+<div class="col bg-danger p-3 text-light">
+  <h3 class="text-right">{{ pedido.master.descricao }} #{{ pedido.master.pk }}</h3>
+</div>
+<div class="d-flex justify-content-center">
+  <div class="col">
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {{ formset.management_form }}
+      {% for categoria in categorias %}
+      <div class="table-wrapper" id="round">
+        <div class="table-title" id="round-top">
+          <div class="row">
+            <div class="col">
+              <h2 align="center">{{ categoria.item__categoria__descricao }}</h2>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div id="order" class="form-inline form-group">
+            <table class="table table-striped table-hover table-responsive-sm text-justify">
+              <thead>
+                {% for form in formset.forms %}
+                {% if forloop.first %}
+                <th class="text-center">Descrição</th>
+                {% if user|has_group:"loja-acougue" %}
+                <th class="text-right">Açougue</th>
+                {% endif %}
+                {% if user|has_group:"loja-loja" %}
+                <th class="text-right">Loja</th>
+                {% endif %}
+                {% if user|has_group:"loja-padaria" %}
+                <th class="text-right">Padaria</th>
+                {% endif %}
+                {% if user|has_group:"loja-verdura" %}
+                <th class="text-right">Verdura</th>
+                {% endif %}
+                {% if form.errors %}
+                <th>Erro</th>
+                {% endif %}
+                {% endif %}
+              </thead>
+              <tbody>
+                {% if form.instance.item.categoria.pk == categoria.item__categoria %}
+                <tr>
+                  <td class="col-8" >{{ form.quantidadeRequisitada.label }}</td>
+                  {% if user|has_group:"loja-acougue" %}
+                  <td class="text-right">{% render_field form.quantidadeAcougue class="form-control col-4" %}
+                    {% if form.errors %}
+                    {{ form.errors }}
+                    {% endif %}</td>
+                  {% else %}
+                  {{ form.quantidadeAcougue.as_hidden }}
+                  {% endif %}
+                  {% if user|has_group:"loja-loja" %}
+                  <td class="text-right">{% render_field form.quantidadeLoja class="form-control col-4" %}
+                    {% if form.errors %}
+                    {{ form.errors }}
+                    {% endif %}</td>
+                  {% else %}
+                  {{ form.quantidadeLoja.as_hidden }}
+                  {% endif %}
+                  {% if user|has_group:"loja-padaria" %}
+                  <td class="text-right">{% render_field form.quantidadePadaria class="form-control col-4" %}
+                    {% if form.errors %}
+                    {{ form.errors }}
+                    {% endif %}</td>
+                  {% else %}
+                  {{ form.quantidadePadaria.as_hidden }}
+                  {% endif %}
+                  {% if user|has_group:"loja-verdura" %}
+                  <td class="text-right">{% render_field form.quantidadeVerdura class="form-control col-4" %}
+                    {% if form.errors %}
+                    {{ form.errors }}
+                    {% endif %}</td>
+                  {% else %}
+                  {{ form.quantidadeVerdura.as_hidden }}
+                  {% endif %}
+                  {{ form.quantidadeRequisitada.as_hidden }}
+                  {{ form.item.as_hidden }}
+                  {% render_field form.id class="form-control is-valid" %}
+                  {% render_field form.pedido class="form-control is-valid" %}
+                </tr>
+                {% endif %}
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      {% if pedido.aberto %}
+      <div id="botao-flutuante"><button type="submit" onclick="this.disabled=true, this.form.submit()" class="btn btn-success">Salvar</button></div>
+      {% endif %}
+    </form>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
